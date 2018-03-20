@@ -1,2 +1,3 @@
 *.pyc
 hal/hx711.py
+couchDB.cfg

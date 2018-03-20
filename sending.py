@@ -4,6 +4,10 @@ import uuid
 import ConfigParser
 import logging
 
+"""
+Sending class deals with sending the weight honey room with the mark of the room to a couchDB
+"""
+
 class Sending:
 
     def __init__(self):

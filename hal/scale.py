@@ -14,9 +14,8 @@ class Scale:
         self.hx = HX711(5, 6)
         self.hx.set_reading_format("LSB", "MSB")
         self.hx.set_reference_unit(self._referenceUnit)
-        self.hx.reset()
-        self.hx.tare()
-
+        self.reset()
+        
     def _cleanUp(self):
         print("Scale._cleanUp")
         GPIO.cleanup()
@@ -30,6 +29,10 @@ class Scale:
         
     def __enter__(self):
         return self
+
+    def reset(self):
+        self.hx.reset()
+        self.hx.tare()        
         
     def getWeight(self):
         #self.hx.power_up()

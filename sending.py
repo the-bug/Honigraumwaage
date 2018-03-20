@@ -2,22 +2,42 @@ import httplib
 from base64 import b64encode
 import uuid
 import ConfigParser
+import logging
 
-def sendWeight(weight, hiveMark):
+class Sending:
 
-    config = ConfigParser.ConfigParser()
-    config.read('couchDB.cfg')
+    def __init__(self):
+        self._loadConfiguration()
 
-    location = config.get('couchDbSection', 'location')
-    user = config.get('couchDbSection', 'user')
-    password =  config.get('couchDbSection', 'password')
-    database = config.get('couchDbSection', 'database')
+    def _loadConfiguration(self):
+        config = ConfigParser.ConfigParser()
+        config.read('couchDB.cfg')
+
+        self.database = config.get('couchDbSection', 'database')
+        self.location = config.get('couchDbSection', 'location')
+        
+        user = config.get('couchDbSection', 'user')
+        password =  config.get('couchDbSection', 'password')
+        userAndPass = b64encode(b"%s:%s" %(user, password)).decode("ascii")
+        
+        self.headers = { 'Content-Type' : 'application/json', 'Authorization' : 'Basic %s' %  userAndPass }
+
+    def _generateBody(self, weight, hiveMark):
+        return "{\"weight\": \"%d\", \"hiveMark\":\"%s\"}" %(weight, hiveMark)
     
-    userAndPass = b64encode(b"%s:%s" %(user, password)).decode("ascii")
-    headers = { 'Content-Type' : 'application/json', 'Authorization' : 'Basic %s' %  userAndPass }
-    id = uuid.uuid4()
-    BODY = "{\"weight\": \"%d\", \"hiveMark\":\"%s\"}" %(weight, hiveMark)
-    conn = httplib.HTTPConnection(location, 5984, timeout=1)
-    conn.request("PUT", "/%s/%s" %(database, id) , BODY, headers=headers)
-    response = conn.getresponse()
-    print response.status, response.reason, response.read()
+    def sendWeight(self, weight, hiveMark):
+        newId = uuid.uuid4()
+        conn = httplib.HTTPConnection(self.location, 5984, timeout=1)
+        conn.request(
+            "PUT", "/%s/%s" %(self.database, newId),
+            self._generateBody(weight, hiveMark),
+            headers=self.headers
+            )
+        response = conn.getresponse()
+        if(response.status == 201):
+            return True
+        else:
+            logMessage = "Unable to send to location: %s, databse: %s and id: %s\n" %(self.location, self.database, newId)
+            logMessage += "HTTP status is %s, reason is %s and response body is:\n%s" %(response.status, response.reason, response.read())
+            logging.error(logMessage)
+            return False

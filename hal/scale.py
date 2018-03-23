@@ -38,7 +38,7 @@ class Scale:
         #self.hx.power_up()
         returnValue = self.hx.get_weight(5)
         #self.hx.power_down()
-        return returnValue
+        return returnValue/1000.0
 
 if __name__ == "__main__":
 

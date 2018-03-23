@@ -46,7 +46,7 @@ class Honigraumwaage:
             with keypad.Keypad(print_key) as myKeypad:
                 while not self.shutdown:
                     val = myScale.getWeight()
-                    print "Gewicht: %d" %(val)
+                    print "Gewicht: %3.1f" %(val)
                     time.sleep(1)
                     
         if self.shutdown:

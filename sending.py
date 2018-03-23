@@ -27,7 +27,7 @@ class Sending:
         self.headers = { 'Content-Type' : 'application/json', 'Authorization' : 'Basic %s' %  userAndPass }
 
     def _generateBody(self, weight, hiveMark):
-        return "{\"weight\": \"%d\", \"hiveMark\":\"%s\"}" %(weight, hiveMark)
+        return "{\"weight\": \"%s\", \"hiveMark\":\"%s\"}" %(weight, hiveMark)
     
     def sendWeight(self, weight, hiveMark):
         newId = uuid.uuid4()

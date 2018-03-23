@@ -1,4 +1,6 @@
 *.pyc
 hal/hx711.py
+hal/lcddriver.py
+hal/i2c_lib.py
 couchDB.cfg
 *.log
